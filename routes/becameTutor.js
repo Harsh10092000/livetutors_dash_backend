@@ -1,7 +1,7 @@
 import express from "express";
 import { checkTutorId, getTutorImageIsActive, fetchBasicInfo, fetchVideoInfo, fetchAddressInfo, 
   fetchFeeInfo, fetchTutorPreferences, fetchEducationInfo, fetchSkillsInfo, fetchTutorExperience, addAddressInfo, 
-  addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience, addVideoInfo, deleteSkillsInfo, deleteEducationInfo } from "../controllers/becameTutor.js";
+  addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience, addVideoInfo, deleteSkillsInfo, deleteEducationInfo, addTeachingExperience, deleteTutorExperience, fetchTeachingExperience  } from "../controllers/becameTutor.js";
 import multer from "multer";
 import path from "path";
 import { db } from "../connect.js";
@@ -100,7 +100,8 @@ router.get("/fetchFeeInfo/:userId", fetchFeeInfo);
 router.get("/fetchTutorPreferences/:userId", fetchTutorPreferences);
 router.get("/fetchEducationInfo/:userId", fetchEducationInfo);
 router.get("/fetchSkillsInfo/:userId", fetchSkillsInfo);
-router.get("/fetchTutorExperience/:tutorId", fetchTutorExperience);
+router.get("/fetchTutorExperience/:userId", fetchTutorExperience);
+router.get("/fetchTeachingExperience/:userId", fetchTeachingExperience);
 router.put("/addAddressInfo", addAddressInfo);
 router.put("/addFeeInfo", addFeeInfo);
 router.put("/addVideoInfo", addVideoInfo);
@@ -108,7 +109,8 @@ router.post("/addSkillsInfo", addSkillsInfo);
 router.post("/addEducationInfo", addEducationInfo);
 router.post("/addTutorExperience", addTutorExperience);
 router.put("/addTutorPreferences", addTutorPreferences);
-
+router.put("/addTeachingExperience", addTeachingExperience);
+router.delete("/deleteTutorExperience/:userId", deleteTutorExperience);
 router.delete("/deleteSkillsInfo/:userId", deleteSkillsInfo);
 router.delete("/deleteEducationInfo/:userId", deleteEducationInfo);
 
