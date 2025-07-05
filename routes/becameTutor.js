@@ -1,7 +1,7 @@
 import express from "express";
 import { checkTutorId, getTutorImageIsActive, fetchBasicInfo, fetchVideoInfo, fetchAddressInfo, 
   fetchFeeInfo, fetchTutorPreferences, fetchEducationInfo, fetchSkillsInfo, fetchTutorExperience, addAddressInfo, 
-  addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience, addVideoInfo, deleteSkillsInfo } from "../controllers/becameTutor.js";
+  addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience, addVideoInfo, deleteSkillsInfo, deleteEducationInfo } from "../controllers/becameTutor.js";
 import multer from "multer";
 import path from "path";
 import { db } from "../connect.js";
@@ -101,11 +101,15 @@ router.get("/fetchTutorPreferences/:userId", fetchTutorPreferences);
 router.get("/fetchEducationInfo/:userId", fetchEducationInfo);
 router.get("/fetchSkillsInfo/:userId", fetchSkillsInfo);
 router.get("/fetchTutorExperience/:tutorId", fetchTutorExperience);
-router.put("/addAddressInfo/:tutorId", addAddressInfo);
-router.put("/addFeeInfo/:tutorId", addFeeInfo);
+router.put("/addAddressInfo", addAddressInfo);
+router.put("/addFeeInfo", addFeeInfo);
 router.put("/addVideoInfo", addVideoInfo);
 router.post("/addSkillsInfo", addSkillsInfo);
+router.post("/addEducationInfo", addEducationInfo);
+router.post("/addTutorExperience", addTutorExperience);
+router.put("/addTutorPreferences", addTutorPreferences);
 
 router.delete("/deleteSkillsInfo/:userId", deleteSkillsInfo);
+router.delete("/deleteEducationInfo/:userId", deleteEducationInfo);
 
 export default router;
