@@ -1,5 +1,7 @@
 import express from "express";
-import { checkTutorId, getTutorImageIsActive, fetchBasicInfo, fetchVideoInfo, fetchAddressInfo, fetchFeeInfo, fetchTutorPreferences, fetchEducationInfo, fetchSkillsInfo, fetchTutorExperience, addAddressInfo, addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience } from "../controllers/becameTutor.js";
+import { checkTutorId, getTutorImageIsActive, fetchBasicInfo, fetchVideoInfo, fetchAddressInfo, 
+  fetchFeeInfo, fetchTutorPreferences, fetchEducationInfo, fetchSkillsInfo, fetchTutorExperience, addAddressInfo, 
+  addFeeInfo, addTutorPreferences, addEducationInfo, addSkillsInfo, addTutorExperience, addVideoInfo, deleteSkillsInfo } from "../controllers/becameTutor.js";
 import multer from "multer";
 import path from "path";
 import { db } from "../connect.js";
@@ -88,38 +90,22 @@ router.put("/updateBasicInfo/:tutorId", upload.single("image"), (req, res) => {
   });
 });
 
-// router.put("/updateAd", upload.single("image"), (req, res) => {
-//     //console.log("req.body : ", req.body);
-//     //console.log("req.file : ", req.file);
-//     const q =
-//       "UPDATE ad_module SET ad_type = ?, ad_link = ?, ad_days = ?, ad_image  = ? WHERE ad_id = ?";
-//     const values = [
-//       req.body.ad_type,
-//       req.body.ad_link,
-//       req.body.ad_days,
-//       req.file ? req.file.filename : req.body.ad_image,
-//       req.body.ad_id,
-//     ];
-//     console.log("values : ", req.body);
-//     db.query(q, values, (err, data) => {
-//       if (err) return res.status(500).json(err);
-//       return res.status(200).json("updated successfully");
-//       //}
-//     });
-//   });
-
 
 router.get("/checkTutorId/:tutorId", checkTutorId);
 router.get("/getTutorImageIsActive/:userId", getTutorImageIsActive);
 router.get("/fetchBasicInfo/:userId", fetchBasicInfo);
-router.get("/fetchVideoInfo/:tutorId", fetchVideoInfo);
-router.get("/fetchAddressInfo/:tutorId", fetchAddressInfo);
-router.get("/fetchFeeInfo/:tutorId", fetchFeeInfo);
-router.get("/fetchTutorPreferences/:tutorId", fetchTutorPreferences);
-router.get("/fetchEducationInfo/:tutorId", fetchEducationInfo);
-router.get("/fetchSkillsInfo/:tutorId", fetchSkillsInfo);
+router.get("/fetchVideoInfo/:userId", fetchVideoInfo);
+router.get("/fetchAddressInfo/:userId", fetchAddressInfo);
+router.get("/fetchFeeInfo/:userId", fetchFeeInfo);
+router.get("/fetchTutorPreferences/:userId", fetchTutorPreferences);
+router.get("/fetchEducationInfo/:userId", fetchEducationInfo);
+router.get("/fetchSkillsInfo/:userId", fetchSkillsInfo);
 router.get("/fetchTutorExperience/:tutorId", fetchTutorExperience);
 router.put("/addAddressInfo/:tutorId", addAddressInfo);
 router.put("/addFeeInfo/:tutorId", addFeeInfo);
+router.put("/addVideoInfo", addVideoInfo);
+router.post("/addSkillsInfo", addSkillsInfo);
+
+router.delete("/deleteSkillsInfo/:userId", deleteSkillsInfo);
 
 export default router;
