@@ -1,5 +1,5 @@
 import express from "express";
-import { fetchTutorRequest} from "../controllers/tutorRequest.js";
+import { fetchTutorRequest } from "../controllers/tutorRequest.js";
 // import { verifyJwt } from "../controllers/verifyjwt.js";
 import multer from "multer";
 import path from "path";
@@ -34,21 +34,21 @@ const generateUrlString = (data, requestId) => {
     .join('-')
     .toLowerCase()
     .replace(/\s+/g, '-');
-  
+
   // Clean location
   const location = (data.city || data.streetAddress || '')
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
 
-const cleaned_requestId = (requestId)
+  const cleaned_requestId = (requestId)
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
 
   // Determine tutor/teacher word
   const teacherWord = tutoringType.includes('home') ? 'teacher' : 'tutor';
-  
+
   // Combine all parts
   const urlParts = [
     tutoringType,
@@ -77,7 +77,7 @@ const storage = multer.diskStorage({
       } while (req.existingRequestIds?.includes(requestId)); // Keep generating until unique
       req.generatedRequestId = requestId;
     }
-    
+
     // Create filename with request ID
     cb(
       null,
@@ -95,7 +95,7 @@ const fileFilter = (req, file, cb) => {
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ];
-  
+
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -117,7 +117,7 @@ router.post("/submitrequesttutor", upload.array("files", 5), async (req, res) =>
     // Check if request ID already exists
     const checkQuery = "SELECT request_id FROM tutor_requests WHERE request_id = ?";
     let requestId;
-    
+
     // Keep generating until we get a unique ID
     do {
       requestId = req.generatedRequestId || generateRequestId();
@@ -163,8 +163,19 @@ router.post("/submitrequesttutor", upload.array("files", 5), async (req, res) =>
 
     // Insert into database
     const q = "INSERT INTO tutor_requests SET ?";
-    
+    // const q_notifications = "INSERT INTO notifications SET ?";
+    const q_notifications = "INSERT INTO notifications (user_id, type, title, message, link) Values (?, ?, ?, ?, ?)";
+    const notification_values =
+      [
+        requestData.user_id,
+        "new_job",
+        "New Job Posted",
+        "A new job has been posted by " + requestData.name,
+        "/tutor-jobs/" + requestData.url
+      ]
+
     db.query(q, requestData, (err, result) => {
+
       if (err) {
         console.error("Database error:", err);
         return res.status(500).json({
@@ -173,11 +184,33 @@ router.post("/submitrequesttutor", upload.array("files", 5), async (req, res) =>
         });
       }
 
-      return res.status(200).json({
-        message: "Tutor request submitted successfully",
-        requestId: requestId,
-        url: urlString,
-        files: req.files ? req.files.map(f => f.filename) : []
+      db.query(q_notifications, notification_values, (err, result2) => {
+        if (err) {
+          console.error("Database error:", err);
+          return res.status(500).json({
+            error: "Database error occurred",
+            details: err.message
+          });
+        } else {
+          const io = req.app.get("socketio");
+          if (io) {
+            io.emit("new_job_notification", {
+              title: "New Job Posted",
+              message: "A new job has been posted.",
+              link: "/tutor-jobs/" + requestData.url
+            });
+          }
+        }
+
+
+
+
+        return res.status(200).json({
+          message: "Tutor request submitted successfully",
+          requestId: requestId,
+          url: urlString,
+          files: req.files ? req.files.map(f => f.filename) : []
+        });
       });
     });
 
